@@ -9,14 +9,14 @@ active: false
 headless: true
 
 # Order that this section appears on the page.
-weight: 90
+weight: 95
 
-title: Recent Publications
+title: Recently Acknowledged
 subtitle: ''
 
 content:
   # Page type to display. E.g. post, talk, publication...
-  page_type: publication
+  page_type: acknowledgement
   # Choose how much pages you would like to display (0 = all pages)
   count: 5
   # Choose how many pages you would like to offset by
@@ -40,5 +40,5 @@ design:
 ---
 
 {{% callout note %}}
-Quickly discover relevant content by [filtering publications](./publication/).
+Quickly discover relevant content by [filtering acknowledgements](./acknowledgement/).
 {{% /callout %}}

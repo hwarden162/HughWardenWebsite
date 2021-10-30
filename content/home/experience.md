@@ -35,7 +35,7 @@ experience:
     company: University of Southampton
     company_url: ''
     company_logo: uos
-    location: California
+    location: Southampton
     date_start: '2016-09-01'
     date_end: '2021-08-31'
     description: Studied for an MMath Master of Mathematics, focusing on machine learning and more specifically its uses in analysing biological systems.
