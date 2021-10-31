@@ -7,7 +7,7 @@ widget: experience
 headless: true
 
 # Order that this section appears on the page.
-weight: 40
+weight: 5
 
 title: Experience
 subtitle:
@@ -33,7 +33,7 @@ experience:
         
   - title: MMath Mathematics
     company: University of Southampton
-    company_url: ''
+    company_url: 'https://www.southampton.ac.uk/'
     company_logo: uos
     location: Southampton
     date_start: '2016-09-01'
