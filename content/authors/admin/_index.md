@@ -43,4 +43,4 @@ title: Hugh Warden
 
 I am currently a PhD student at the Institute of Genetics and Cancer which is a part of the University of Edinburgh. I work in the Human Genetics Unit using machine learning to try and gain a better understanding of the genetic component of human disease. For my current project, I am trying to build a prototype image classifier to identify the presence of cancerous cells based on their morphology (their shape).
 
-{{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/resume.pdf" "newtab" >}}resumé{{< /staticref >}}.
+{{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/HughWardenCV.pdf" "newtab" >}}resumé{{< /staticref >}}.
