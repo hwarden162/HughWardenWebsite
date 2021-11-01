@@ -1,0 +1,56 @@
+#about {
+  @keyframes slide-from-right {
+    0% {
+      transform: translateX(150%);
+    }
+    100% {
+      transform: translateX(0%);
+    }
+  }
+  
+  @keyframes slide-from-left {
+    0% {
+      transform: translateX(-150%);
+    }
+    100% {
+      transform: translateX(0%);
+    }
+  }
+  
+  @keyframes slide-from-bottom {
+    0% {
+      transform: translateY(150%);
+    }
+    100% {
+      transform: translateY(0%);
+    }
+  }
+
+  .biography-title {
+    animation: slide-from-right 1s forwards;
+  }
+  
+  .main-content {
+    animation: slide-from-right 1s forwards;
+  }
+  
+  .avatar {
+    animation: slide-from-left 1s forwards;
+  }
+  
+  .portrait-title {
+    animation: slide-from-left 1s forwards;
+  }
+  
+  .network-icon {
+    animation: slide-from-left 1s forwards;
+  }
+  
+  .interests-div {
+    animation: slide-from-bottom 1s forwards;
+  }
+  
+  .education-div {
+    animation: slide-from-bottom 1s forwards;
+  }
+}

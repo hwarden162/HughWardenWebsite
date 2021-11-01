@@ -9497,3 +9497,42 @@ div.chart {
 
 .portrait-title h2 {
   font-size: 1.5rem; }
+
+@keyframes slide-from-right {
+  0% {
+    transform: translateX(150%); }
+  100% {
+    transform: translateX(0%); } }
+
+@keyframes slide-from-left {
+  0% {
+    transform: translateX(-150%); }
+  100% {
+    transform: translateX(0%); } }
+
+@keyframes slide-from-bottom {
+  0% {
+    transform: translateY(150%); }
+  100% {
+    transform: translateY(0%); } }
+
+#about .biography-title {
+  animation: slide-from-right 1s forwards; }
+
+#about .main-content {
+  animation: slide-from-right 1s forwards; }
+
+#about .avatar {
+  animation: slide-from-left 1s forwards; }
+
+#about .portrait-title {
+  animation: slide-from-left 1s forwards; }
+
+#about .network-icon {
+  animation: slide-from-left 1s forwards; }
+
+#about .interests-div {
+  animation: slide-from-bottom 1s forwards; }
+
+#about .education-div {
+  animation: slide-from-bottom 1s forwards; }
