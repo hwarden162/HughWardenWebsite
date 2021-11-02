@@ -1,13 +1,13 @@
 ---
-title: Working With Hypergraphs in R Using hypR
+title: Working With Hypergraphs In R Using hypR
 author: R package build
 date: '2021-11-02'
 slug: working-with-hypergraphs-in-r-using-hypr
-categories: []
-tags: []
-subtitle: ''
+categories: [Hypergraphs, R]
+tags: [Hypergraphs, R]
+subtitle: 'A One Stop Package For Using Hypergraphs In R'
 summary: ''
-authors: []
+authors: [admin]
 lastmod: '2021-11-02T11:48:02Z'
 featured: no
 image:
@@ -17,4 +17,4 @@ image:
 projects: []
 ---
 
-# Working With Hypergraphs in R
+
