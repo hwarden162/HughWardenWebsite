@@ -11,8 +11,8 @@ authors: [admin]
 lastmod: '2021-11-02T11:48:02Z'
 featured: no
 image:
-  caption: ''
-  focal_point: ''
+  caption: 'Picture From subpng.com'
+  focal_point: 'Smart'
   preview_only: no
 projects: []
 ---
