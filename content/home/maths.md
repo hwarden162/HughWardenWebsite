@@ -9,14 +9,14 @@ active: true
 headless: true
 
 # Order that this section appears on the page.
-weight: 5
+weight: 6
 
-title: Projects
+title: Maths
 subtitle: ''
 
 content:
   # Page type to display. E.g. project.
-  page_type: project
+  page_type: maths
 
   # Default filter index (e.g. 0 corresponds to the first `filter_button` instance below).
   filter_default: 0
@@ -31,12 +31,10 @@ content:
     tag: '*'
   - name: Machine Learning
     tag: Machine Learning
-  - name: R
-    tag: R
+  - name: Statistics
+    tag: Statistics
   - name: Hypergraphs
     tag: Hypergraphs
-  - name: Biology
-    tag: Biology
 
 design:
   # Choose how many columns the section has. Valid values: '1' or '2'.
