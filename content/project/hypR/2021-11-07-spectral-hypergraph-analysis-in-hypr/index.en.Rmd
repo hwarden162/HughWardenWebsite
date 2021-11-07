@@ -1,0 +1,25 @@
+---
+title: Spectral Hypergraph Analysis In hypR
+author: R package build
+date: '2021-11-07'
+slug: spectral-hypergraph-analysis-in-hypr
+categories: [Hypergraphs, R]
+tags: [Hypergraphs, R]
+subtitle: 'Methods For Comparing Hypergraph Objects'
+summary: 'An introduction to spectral hypergraph analysis using hypR.'
+authors: [admin]
+lastmod: '2021-11-07T21:33:30Z'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+links:
+- icon: github
+  icon_pack: fab
+  name: Code
+  url: https://github.com/hwarden162/hypR
+projects: [hypR]
+---
+
+Hypergraphs are a natural choice for modelling many situations where there are complex interactions between various entities. However, it is notoriously hard to compare two hypergraphs, it is computationally infeasible even two ask if two hypergraphs are 'the same' (even the notion of two hypergraphs being 'the same' is complicated).

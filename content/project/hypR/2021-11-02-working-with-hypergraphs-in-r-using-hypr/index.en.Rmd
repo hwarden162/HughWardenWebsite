@@ -19,7 +19,7 @@ links:
   icon_pack: fab
   name: Code
   url: https://github.com/hwarden162/hypR
-projects: []
+projects: [hypR]
 ---
 
 For my masters project I studied hypergraphs and their applications in the analysis of biological systems. It was annoying that there was no package for creating hypergraph objects that could have many different analyses applied to them in R or Python. There are many options for traditional graphs (e.g. *igraph* or *NetworkX*) but when it comes to hypergraphs I found that each package could only perform one type of analysis. 
