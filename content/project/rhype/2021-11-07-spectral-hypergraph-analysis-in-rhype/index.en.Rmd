@@ -1,0 +1,32 @@
+---
+title: Spectral Hypergraph Analysis In rhype
+author: R package build
+date: '2021-11-07'
+slug: spectral-hypergraph-analysis-in-rhype
+categories: [Hypergraphs, R]
+tags: [Hypergraphs, R]
+subtitle: 'Methods For Comparing Hypergraph Objects'
+summary: 'An introduction to spectral hypergraph analysis using rhype.'
+authors: [admin]
+lastmod: '2021-11-07T21:33:30Z'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+links:
+- icon: github
+  icon_pack: fab
+  name: Code
+  url: https://github.com/hwarden162/rhype
+projects: [rhype]
+---
+
+Hypergraphs are a natural choice for modelling many situations where there are complex interactions between various entities. However, it is notoriously hard to compare two hypergraphs, it is computationally infeasible even two ask if two hypergraphs are 'the same' (even the notion of two hypergraphs being 'the same' is complicated). Spectral analysis allows for hypergraphs to be compared to one another in a quick manner.
+
+Spectral hypergraph theory is a natural extension graph theory. I have an article on [spectral graph theory](https://www.hwarden.com/maths/graph-theory/spectral-graph-theory-basics/) and to see how this has been generalised to hypergraphs please see the work of [Raffaella Mulas](https://raffaellamulas.weebly.com/) specifically ['Hypergraph Laplace Operators For Chemical Reaction Networks'](https://doi.org/10.1016/j.aim.2019.05.025). However, the essence of the methodology remains the same: represent a hypergraph as a matrix such that the eigenvalues of that matrix will have interesting properties depending on the structure of the hypergraph.
+
+**Article in the process of being written**
+
+
+
