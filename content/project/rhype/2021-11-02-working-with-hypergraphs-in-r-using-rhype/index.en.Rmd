@@ -32,6 +32,12 @@ However, for those users with a greater technical skillset, they are able to wor
 
 # Installation
 
+The `rhype` package cane be downloaded from CRAN by
+
+``` {r, eval=FALSE}
+install.packages("rhype")
+```
+
 The development version of rhype is available from [GitHub](https://github.com) with:
 
 ``` {r, eval=FALSE}
