@@ -4,13 +4,13 @@
 widget: blank
 
 # Activate this widget? true/false
-active: false
+active: true
 
 # This file represents a page section.
 headless: true
 
 # Order that this section appears on the page.
-weight: 3
+weight: 4.5
 
 title: 
 subtitle:
