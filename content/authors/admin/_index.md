@@ -41,8 +41,8 @@ superuser: true
 title: Hugh Warden
 ---
 
-I am currently a PhD student at the Institute of Genetics and Cancer, which is a part of the University of Edinburgh. I am currently building an explainable AI pipeline to identify phenotypic changes associated with different mutations.
+I am currently a PhD student at the Institute of Genetics and Cancer, which is a part of the University of Edinburgh. I have just finished a rotation project with Ava Khamseh's lab on automating image preprocessing for building image based machine learning pipelines to identify mutational signatures from cell morpholody. I am currently working with Greg Kudla's lab to  build an explainable AI pipeline to identify phenotypic changes associated with different mutations.
 
-My other interests include practical applications of hypergraphs. I have written the `rhype` package for using hypergraphs in R, which is available on CRAN. I am also writing the `hyperpy` for using hypergraphs in Python, available on my GitHub.
+My other interests include practical applications of hypergraphs. I have written the `rhype` package for using hypergraphs in R, which is available on CRAN, and I am currently writing an update to speed up matrix based functionality.
 
 {{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/HughWardenCV.pdf" "newtab" >}}resumé{{< /staticref >}}.
