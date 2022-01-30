@@ -28,9 +28,9 @@ social:
   icon_pack: fab
   label: Follow me on Twitter
   link: https://twitter.com/HughWarden1
-- icon: graduation-cap
-  icon_pack: fas
-  link: https://scholar.google.co.uk/
+- icon: stack-overflow
+  icon_pack: fab
+  link: https://stackoverflow.com/users/13642459/hugh-warden
 - icon: github
   icon_pack: fab
   link: https://github.com/hwarden162
