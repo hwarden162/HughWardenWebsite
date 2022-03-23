@@ -5,8 +5,8 @@ date: '2022-03-23'
 slug: creating-text-art-using-javascript
 categories: []
 tags: []
-subtitle: ''
-summary: ''
+subtitle: 'Having fun with the JavaScript p5 library and my cell painting pictures'
+summary: 'Having fun with the JavaScript p5 library and my cell painting pictures'
 authors: []
 lastmod: '2022-03-23T00:33:59Z'
 featured: no
