@@ -1,0 +1,97 @@
+---
+title: Creating Text Art Using JavaScript
+author: R package build
+date: '2022-03-23'
+slug: creating-text-art-using-javascript
+categories: []
+tags: []
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2022-03-23T00:33:59Z'
+featured: no
+image:
+  caption: ''
+  focal_point: 'Smart'
+  preview_only: no
+links:
+- icon: youtube
+  icon_pack: fab
+  name: Inspiration
+  url: https://www.youtube.com/watch?v=55iwMYv8tGI&t=745s
+projects: []
+---
+
+<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+
+
+<p>I love finding cool ways to visualise my work, especially as I am often working with people who have a completely different background to me and I need to communicate what I have done. In doing this I spend a lot of time researching visualisation and I came across a cool video from <a href="https://www.youtube.com/channel/UCvjgXvBlbQiydffZU7m1_aw">The Coding Train</a> on creating <a href="https://www.youtube.com/watch?v=55iwMYv8tGI&amp;t=745s">ASCII Videos</a>. It’s super cool but never going to come up in my work. But when I decided I wanted a cool graphic for the beginning of a presentation I decided to give it a try.</p>
+<p>The idea behind the video is that different ASCII characters take up different amount of space, for example and ‘N’ lights up more pixels than a hyphen ‘-’. This can then be used as a primitive form of shading, in that every picture of a grayscale image can be replaced with a square and at the center of the square a character could be written. If a pixel is bright than a character should be drawn that will light up more pixels. This effect actually works rather well.</p>
+<p>The presentation I am doing is on using machine learning to investigate how cells change shape when we mutate the TP53 gene. This means I have loads of cool pictures of cells that look really impressive (just google <a href="https://www.google.com/search?q=cell+painting+fluorescence&amp;tbm=isch&amp;ved=2ahUKEwjyysWvg9v2AhVF44UKHbl5AuEQ2-cCegQIABAA&amp;oq=cell+painting+fluorescence&amp;gs_lcp=CgNpbWcQAzoHCCMQ7wMQJzoFCAAQgAQ6BggAEAUQHjoECAAQHjoGCAAQCBAeUKA6WLyDAWD0hwFoC3AAeACAAV6IAeILkgECMjSYAQCgAQGqAQtnd3Mtd2l6LWltZ8ABAQ&amp;sclient=img&amp;ei=bHA6YvLkFcXGlwS584mIDg&amp;bih=787&amp;biw=1440&amp;client=firefox-b-d">cell painting</a> for some examples) but I also wanted to add a nod to machine learning, the main focus of my work. I decided the character overlay gave the picture a more computational theme.</p>
+<p>This work was done mainly using the <a href="https://p5js.org/">p5 JavaScript library</a>, which has an absolutely fabulous <a href="https://editor.p5js.org/">online editor</a>. I am not going to rehash the tutorial done by The Coding Train as it is fantastic (and you should go watch it now!) so I will just post my code and point out where I made some changes.</p>
+<pre class="r"><code>const density = &#39;Ñ@#W$9876543210?!abc;:+=-,._ &#39;
+
+let cellPainting
+
+function preload() {
+  cellPainting = loadImage(&quot;CellPainting.png&quot;);
+}
+
+function setup() {
+  createCanvas(720, 432);
+}
+
+function draw() {
+  background(0);
+  
+  let w = width/cellPainting.width;
+  let h = height/cellPainting.height;
+  cellPainting.loadPixels()
+  
+  let maxavg = 0;
+  let minavg = 99999;
+  
+  for (let i = 0; i &lt; cellPainting.width; i++) {
+    for (let j = 0; j &lt; cellPainting.height; j++) {
+      const pixelIndex = (i + j * cellPainting.width) * 4;
+      const r = cellPainting.pixels[pixelIndex + 0];
+      const g = cellPainting.pixels[pixelIndex + 1];
+      const b = cellPainting.pixels[pixelIndex + 2];
+      const avg = (r+g+b)/3;
+      
+      if (avg &gt; maxavg) {
+        maxavg = avg;
+      }
+      
+      if (avg &lt; minavg) {
+        minavg = avg;
+      }
+      
+    }
+  }
+  
+  for (let i = 0; i &lt; cellPainting.width; i++) {
+    for (let j = 0; j &lt; cellPainting.height; j++) {
+      const pixelIndex = (i + j * cellPainting.width) * 4;
+      const r = cellPainting.pixels[pixelIndex + 0];
+      const g = cellPainting.pixels[pixelIndex + 1];
+      const b = cellPainting.pixels[pixelIndex + 2];
+      const avg = (r+g+b)/3;
+      
+      noStroke();
+      fill(r,g,b);
+      
+      const len = density.length;
+      const charIndex = floor(map(avg, minavg, maxavg, 0, len));
+      
+      
+      textSize(w);
+      textAlign(CENTER, CENTER);
+      text(density.charAt(charIndex), i * w + w * 0.5, j * h + h * 0.5);
+    }
+  }
+}
+
+saveCanvas(&quot;MYCanvas&quot;, &quot;png&quot;)</code></pre>
+<p>Firstly, as they did in the video, I used photo shop to downsample the number of pixels in my uploaded image so that more characters could be seen. Then I mostly followed the given code. My first change was a basic change to the size of the canvas but my second was to add two new variables <code>maxavg</code> and <code>minavg</code>. These found the maximum and minimum values used to map to our character set to make sure we were using the full set of values (see also changing the second and third argument of the <code>map</code> function to <code>minavg</code> and <code>maxavg</code>). Then I duplicated the for loop in from the tutorial but this time using it to find the minimum and maximum values for the average RGB brightness. I am sure there is a better way to do this but if it ain’t broke don’t fix it!</p>
+<p>I then proceeded to use the for loop from the tutorial but I reverted the fill to show the RGB colour values again (<code>fill(r,g,b)</code>) as the colours are incredibly important in my image. This means I get a different effect than the one maybe intended from the tutorial but it’s something I am very happy with. My final image is shown in the thumbnail, but for my presentation I actually overlayed the original image on top but at very high transparency to get more of the defined cell structure as well.</p>
