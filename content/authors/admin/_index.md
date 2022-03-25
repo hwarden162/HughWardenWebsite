@@ -1,5 +1,5 @@
 ---
-bio: I focus on applications of machine learning in the understanding of the genetic component of human disease.
+bio: I use machine learning and cell painting to look at how cancer affects the morphology of cells
 education:
   courses:
   - course: PhD Genetics and Molecular Medicine
