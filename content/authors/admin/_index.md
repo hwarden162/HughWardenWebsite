@@ -46,7 +46,7 @@ title: Hugh Warden
 
 I am currently a PhD student at the Institute of Genetics and Cancer, part of the University of Edinburgh. I have just finished two rotation projects, the first automating image preprocessing for a machine learning pipeline to identify mutational signatures of oncogenic cells via their morphology. The second using cell painting, scRNA-seq and "explainable AI" to quantify transcriptomic and morphological changes from P53 mutations.
 
-I am now starting my main PhD project under the supervision of Ava Khamseh. I will be using machine learning (specifically targeted learning, super learners and causal inference) and cell painting to investigate the affects of cancer on cell morphology.
+I am now starting my main PhD project under the supervision of Ava Khamseh. I will be using machine learning (specifically targeted learning, super learners and causal inference) as well as cell painting to investigate the affects of cancer on cell morphology.
 
 My other interests include practical applications of hypergraphs. I have written the `rhype` package for using hypergraphs in R, which is available on CRAN, and I am currently writing an update to speed up matrix based functionality.
 
