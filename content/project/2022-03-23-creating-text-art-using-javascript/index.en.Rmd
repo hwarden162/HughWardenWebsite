@@ -26,7 +26,7 @@ projects: []
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
-I love finding cool ways to visualise my work, especially as I am often working with people who have a completely different background to me and I need to communicate what I have done. In doing this I spend a lot of time researching visualisation and I came across a cool video from [The Coding Train](https://www.youtube.com/channel/UCvjgXvBlbQiydffZU7m1_aw) on creating [ASCII Videos](https://www.youtube.com/watch?v=55iwMYv8tGI&t=745s). It's super cool but never going to come up in my work. But when I decided I wanted a cool graphic for the beginning of a presentation I decided to give it a try.
+I love finding new and interesting ways to visualise my work, especially as I am often working with people who have a completely different background to me and I need to communicate what I have done. In doing this I spend a lot of time researching visualisation and I came across a video from [The Coding Train](https://www.youtube.com/channel/UCvjgXvBlbQiydffZU7m1_aw) on creating [ASCII Videos](https://www.youtube.com/watch?v=55iwMYv8tGI&t=745s). It's super cool but never going to come up in my work. But when I decided I wanted an eye-catching graphic for the beginning of a presentation I decided to give it a try.
 
 The idea behind the video is that different ASCII characters take up different amount of space, for example and 'N' lights up more pixels than a hyphen '-'. This can then be used as a primitive form of shading, in that every pixel of a grayscale image can be replaced with a square and at the center of the square a character could be written. If a pixel is bright than a character should be drawn that will light up more pixels. This effect actually works rather well.
 
