@@ -29,7 +29,7 @@ experience:
     location: Edinburgh
     date_start: '2021-09-01'
     date_end: ''
-    description: Rotation student at the Human Genetics Unit focusing on using machine learning to gain a greater understanding of the genetic component of human disease.
+    description: PhD student in the Biomedical AI lab run by Ava Khamseh. I am using machine learning and cell painting to investigate the effect of cancer on cellular morphology.
         
   - title: MMath Mathematics
     company: University of Southampton
