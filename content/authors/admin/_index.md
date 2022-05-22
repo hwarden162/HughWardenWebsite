@@ -1,5 +1,5 @@
 ---
-bio: I use machine learning and cell painting to look at how cancer affects the morphology of cells
+bio: I use machine learning and cell painting to look at how cancer affects the morphology of cells.
 education:
   courses:
   - course: PhD Genetics and Molecular Medicine
@@ -12,6 +12,7 @@ email: "hugh.warden@outlook.com"
 highlight_name: true
 interests:
 - Machine Learning
+Bioimage Analysis
 - Hypergraphs
 - Statistics
 organizations:
