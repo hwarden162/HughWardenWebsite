@@ -12,7 +12,7 @@ email: "hugh.warden@outlook.com"
 highlight_name: true
 interests:
 - Machine Learning
-Bioimage Analysis
+- Bioimage Analysis
 - Hypergraphs
 - Statistics
 organizations:
