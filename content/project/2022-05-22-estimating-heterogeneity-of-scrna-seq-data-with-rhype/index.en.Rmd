@@ -1,0 +1,195 @@
+---
+title: Estimating Heterogeneity of scRNA-seq Data With rhype
+author: R package build
+date: '2022-05-22'
+slug: estimating-heterogeneity-of-scrna-seq-data-with-rhype
+categories:
+  - R
+  - Hypergraphs
+tags:
+  - Hypergraphs
+  - R
+  - scRNA-seq
+subtitle: ''
+summary: ''
+authors: [admin]
+lastmod: '2022-05-22T23:37:28+01:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+During my masters, I wrote my thesis on 'The Applications of Hypergraphs in the Analysis of Biological Systems'. From this, I took my love of R and wrote the `rhype` package, read [my article](https://www.hwarden.com/project/rhype/working-with-hypergraphs-in-r-using-rhype/) introducing it. Here I'd like to talk about one application of hypergraphs from the field of genetics (where I have found myself for my PhD) that came from two people I worked with closely during my masters, specifically how it can be done very easily using `rhype`.
+
+Hypergraphs are mathematical objects used to represent higher order interactions within a system. There are many places where they can be applied across all of science, one being the field of single cell RNA sequencing (scRNA-seq). The details of scRNA-seq are not gone into in this post (not least because I am wholly unqualified to explain it), for a more in depth explanation please read [this article](https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-017-0467-4). From a hypergraphical perspective, each cell can be viewed as a vertex and each gene as a hyperedge, with each cell being contained in a hyperedge if that cell expressed the given gene. This relationship can then be further abstracted using hypergraphs with real coefficients, where each vertex is connected to a hyperedge (gene) with a weight according to how many times the cell transcribed the gene. This is all starting to get quite complicated, luckily the code for this is very simple, lets take a look at an example.
+
+You can download the data I am using [here](https://www.hwarden.com/uploads/datasets/scRNA-seq_example.RData), it is from [Patrick Stumpf](https://twitter.com/p4sst)'s paper [Mapping Biology From Mouse to Man Using Transfer Learning](https://doi.org/10.1101/2019.12.26.888842). First of all, load in the data.
+
+```{r loading data, message=FALSE, warning=FALSE}
+library(Matrix)
+
+load("./scRNA-seq_example.RData")
+```
+
+You can see in your environment window three different objects `counts`, `plot_coords` and `identity` that we will discuss during the post. The first and most important of these is the counts matrix `counts`, this is the table of gene counts. It is stored in a sparse matrix format (hence why we needed to load up the Matrix package) as it is very big, we can see a small section of the matrix using
+
+```{r glimpse counts matrix}
+as.matrix(counts[1:5,3:4])
+```
+
+Fortunately, this matrix is actually the same as the incidence matrix of the underlying hypergraph, this means to make a hypergraph the only code we need is
+
+```{r making hypergraph}
+library(rhype)
+
+counts_hypergraph <- hype_from_inc_mat(counts, real_coef = TRUE)
+counts_hypergraph
+```
+
+The question now is what can we do with this hypergraph? How can it actually help us in the real world? This is where a paper by [Raffaella Mulas](https://twitter.com/graphaellamulas) and [Michael Casey](https://twitter.com/Michael_Casey95) comes in called [Estimating cellular redundancy in networks of genetic expression](https://doi.org/10.1016/j.mbs.2021.108713). This uses spectral hypergraph theory to create an estimate of cellular redundancy in scRNA-seq data. Before we dive into the spectral theory and calculations, in their paper they normalise their scRNA-seq data per cell, so lets do that and then remake our hypergraph
+
+```{r creating normalised hypergraph}
+#Normalising counts so the rows sum to 1
+norm_counts <- apply(counts, 1, \(x) x/sum(x))
+#Reorienting the matrix so cells are rows again
+norm_counts <- t(norm_counts)
+
+#Creating the hypergraph
+norm_counts_hypergraph <- hype_from_inc_mat(norm_counts, real_coef = TRUE)
+```
+
+The essence of spectral hypergraph theory is that hypergraphs can be represented as matrices and square matrices can be represented with [eigenvalues](https://www.youtube.com/watch?v=PFDu9oVAE-g). If we choose our matrix representation well, these eigenvalues will contain important information about the hypergraph. The paper describes how the largest eigenvalue of the hypergraph normalised laplacians will encode information about the cellular redundancy of the scRNA-seq data. This largest eigenvalue can be calculated with one command.
+
+```{r calculate largest eigenvalue}
+ev <- spectra(
+  #The hypergraph to find the spectra of
+  hype = norm_counts_hypergraph,
+  #The matrix to use to find the spectra
+  matrix = "vert_norm_lap_mat",
+  #The number of eigenvalues to look for
+  n = 1
+)
+
+ev$values
+```
+
+This gives a complex number between $1$ and $N$, where $N$ is the number of vertices in the hypergraph (or the number of cells in the scRNA-seq dataset). In the paper they normalise this to the range $[\frac{1}{N}, 1]$ by dividing the eignevalue, $\lambda$, by $N$, $\frac{\lambda}{N}$. For this post we will be using a different normalisation formula to account for samples with different numbers of cells. Using $\frac{\lambda -1}{N-1}$ maps the eigenvalue to the range $[0,1]$. We can create and compare these two formulae (there is currently no wrapper function to find the number of vertices in a hypergraph, so for now we use the object function `<hypergraph>$get_numv()`).
+
+```{r eigenvalue normalisation formulae}
+ev_norm1 <- function(ev) {
+  ev <- Re(ev$values)
+  N <- norm_counts_hypergraph$get_numv()
+  ev/N
+}
+
+ev_norm2 <- function(ev) {
+  ev <- Re(ev$values)
+  N <- norm_counts_hypergraph$get_numv()
+  (ev-1)/(N-1)
+}
+
+ev_norm1(ev)
+ev_norm2(ev)
+```
+
+That is it! As you can see these two normalisation methods gave very similar answers and both can be used as a measure of cellular redundancy, or homogeneity, as described in the paper. But calculating one number isn't really much of a post, so lets do some comparisons.
+
+Our data set contains cells of multiple different types, these types can be found in the `identity` object. We can see what these look like using the plotting coordinates in the `plot_coords` variable.
+
+```{r plot tsne, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+tibble(
+  x = plot_coords$tSNE1,
+  y = plot_coords$tSNE2,
+  col = identity
+) %>%
+  ggplot(
+    aes(
+      x = x,
+      y = y,
+      colour = col
+    )
+  ) +
+  geom_point() +
+  theme_void() +
+  labs(
+    colour = "Cell Type",
+    caption = "Plotting coordinates from Patrick Stumpf"
+  )
+```
+
+Instead of making a hypergraph for the whole dataset, we can make a hypergraph just for each cell type and compare homogeneity between cell types.
+
+```{r making cell tye hypergraphs}
+hypergraphs <- list()
+
+for (i in 1:14) {
+  cell_type = levels(identity)[i]
+  new_counts <- norm_counts[identity == cell_type,]
+  hypergraphs[[i]] <- hype_from_inc_mat(new_counts, real_coef = TRUE)
+}
+
+names(hypergraphs) <- levels(identity)
+```
+
+We can then calculate the largest eigenvalue for each of these hypergraphs
+
+```{r calculating eigenvalues}
+evs <- list()
+
+for (i in 1:14) {
+  evs[[i]] <- spectra(
+    hype = hypergraphs[[i]],
+    matrix = "vert_norm_lap_mat",
+    n = 1
+  )
+}
+
+cell_red_scores <- unlist(lapply(evs, ev_norm2))
+```
+
+Lets compare these to one another
+
+```{r comparing evs, echo=FALSE}
+tibble(
+  evs = cell_red_scores,
+  cell_type = names(hypergraphs)
+) %>%
+  mutate(
+    cell_type = factor(cell_type),
+    cell_type = fct_reorder(cell_type, evs)
+  ) %>%
+  ggplot(
+    aes(
+      x = cell_type,
+      y = evs,
+      fill = cell_type
+    )
+  ) +
+  geom_col() +
+  coord_flip() +
+  theme_classic() +
+  scale_y_continuous(trans = scales::sqrt_trans()) +
+  scale_fill_viridis_d() +
+  theme(
+    axis.text.y = element_text(angle = 30)
+  ) +
+  guides(
+    fill = "none"
+  ) +
+  labs(
+    y = "Cellular Redundancy Score",
+    x = "Cell Type"
+  )
+```
+
+The graph above ranks the cell types from most heterogeneous (Pre-B) to least heterogeneous (Erythroblasts). As scientists we like to put confidence intervals on quantities. This is certainly possible for the cellular redundancy score too, but it is a whole other discussion in its own right, so keep an eye out for another post.
+
+
+
+
+
