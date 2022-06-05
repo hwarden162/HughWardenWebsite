@@ -1,0 +1,180 @@
+---
+title: 'Identifying Gene Characteristics From Literature Using Machine Learning: Data
+  Collection'
+author: R package build
+date: '2022-06-04'
+slug: identifying-gene-characteristics-from-literature-using-machine-learning-data-collection
+categories: []
+tags: []
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2022-06-04T23:57:09+01:00'
+featured: no
+image:
+  caption: 'github.com/PyMed'
+  focal_point: ''
+  preview_only: no
+links:
+- icon: github
+  icon_pack: fab
+  name: Code
+  url: https://github.com/hwarden162/mutation_nlp
+projects: []
+---
+
+<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+
+
+<p>I dropped biology as a subject when I was 15, so it was a bit of a culture shock when I started my PhD at the Institute of Genetics and Cancer in September. However, after 9 months of being here I find I can now read the abstract for most papers in genetics and have some sort of grasp on what’s going on. So, I was thinking if someone with as little experience as I have can gain information from these papers, why can’t a computer?</p>
+<p>I have wanted to do a natural language processing task for a while and so I found this thought quite interesting. But as with everything in machine learning, I first had to deal with two very important questions: What specific task am I going to attempt? Where can I get appropriate data to carry out that specific task? These are the questions I am going to cover in this post. It is actually rather scary as I am not currently much further than data collection so this whole thing may end in a big failure!</p>
+<p>The problem of where I was going to get my data was actually much easier than I thought. I was coming up with all sorts of plans in my head of web scraping and all the issues this might entail. When after a quick search I found the PubMed API for querying the MEDLINE data base. One thing to note here is that the MEDLINE database does not contain full articles, only titles, references and abstracts. In my head this seemed to be a massive loss of data, but thinking more about my basic grasp of NLP I decided that there was good reason to just use paper abstracts, as they should be very focused on their subject matter and therefore be good quality data to gain insight from. (I also thought of all those papers I was supposed to have read but really I’d just skimmed the abstract and figures!)</p>
+<p>Now I had a source of data, but the idea of learning to communicate with the API was filling me with dread. It’s probably very simple but my head was full of worries about hours spent trawling through documentation and maybe even having to dredge up my SQL. But again after a quick google I found the <a href="https://package.wiki/pymed">PyMed</a> package for interfacing with the PubMed API and everything (as often goes) was much easier than I thought it was going to be (thank you so much to the PyMed team!).</p>
+<p>With some plans about data collection in my head, I now had to come up with a question. This I already had an idea for, something that I thought would be fairly simple and turned out to be much less straightforward to tackle. In my work, I talk a lot about gain of function (GOF) and loss of function (LOF) mutations. This is not a thorough biological definition, but a brief oversimplification can be given as GOF mutations cause cells to grow out of control and LOF mutations stop the cells from being able to monitor themselves and stop unwanted activity. It is common to see one of each of these mutations in cells that are cancerous, with one mutation causing accelerated growth and the other inhibiting the systems the cell has to put a stop to it. At work we very confidently talk about genes being GOF/LOF so I thought there would be a nice table or list somewhere that I could download, but there was not. I don’t know if it exists and I gave up too quickly, but after some searching I did manage to find <a href="https://www.cancerquest.org/cancer-biology/cancer-genes">such a table</a>, allbeit not from an academic journal or institute like I was hoping for.</p>
+<p>I copied these two tables into Python and I had my lists of GOF and LOF mutations:</p>
+<pre class="python"><code>search_genes = {
+    &quot;GOF&quot;: [
+        &#39;ABL1&#39;, &#39;AFF4&#39;, &#39;AKAP13&#39;, &#39;AKT2&#39;, &#39;ALK&#39;, &#39;AML1&#39;,
+        &#39;AXL&#39;, &#39;BCL-2&#39;, &#39;BCL-3&#39;, &#39;BCL-6&#39;, &#39;BCR&#39;, &#39;CAN&#39;,
+        &#39;CBFB&#39;, &#39;CCND1&#39;, &#39;CSF1R&#39;, &#39;DEK&#39;, &#39;E2A&#39;, &#39;EGFR&#39;, 
+        &#39;ERBB2&#39;, &#39;ERG&#39;, &#39;ETS1&#39;, &#39;EWSR1&#39;, &#39;FES&#39;, &#39;FGF3&#39;,
+        &#39;FGF4&#39;, &#39;FLI1&#39;, &#39;FOS&#39;, &#39;FUS&#39;, &#39;GLI1&#39;, &#39;GNAS&#39;, 
+        &#39;HER2&#39;, &#39;HRAS&#39;, &#39;IL3&#39;, &#39;JUN&#39;, &#39;K-SAM&#39;, &#39;KIT&#39;, 
+        &#39;KRAS&#39;, &#39;LCK&#39;, &#39;LMO1&#39;, &#39;LMO2&#39;, &#39;LYL1&#39;,&#39;MAS1&#39;, 
+        &#39;MCF2&#39;, &#39;MDM2&#39;, &#39;MLLT11&#39;, &#39;MOS&#39;, &#39;MTG8&#39;, &#39;MYB&#39;, 
+        &#39;MYC&#39;, &#39;MYCN&#39;, &#39;MYH11&#39;, &#39;NEU&#39;, &#39;NFKB2&#39;, &#39;NOTCH1&#39;, 
+        &#39;NPM&#39;, &#39;NRAS&#39;, &#39;NRG&#39;, &#39;NTRK1&#39;, &#39;NUP214&#39;, &#39;PAX-5&#39;, 
+        &#39;PBX1&#39;, &#39;PIM1&#39;, &#39;PML&#39;, &#39;RAF1&#39;, &#39;RARA&#39;, &#39;REL&#39;, 
+        &#39;RET&#39;, &#39;RHOM1&#39;, &#39;RHOM2&#39;, &#39;ROS1&#39;, &#39;RUNX1&#39;, &#39;SET&#39;, 
+        &#39;SIS&#39;, &#39;SKI&#39;, &#39;SRC&#39;, &#39;TAL1&#39;, &#39;TAL2&#39;, &#39;TCF3&#39;, 
+        &#39;TIAM1&#39;, &#39;TLX1&#39;, &#39;TSC2&#39;
+    ],
+    &quot;LOF&quot;: [
+        &#39;APC&#39;, &#39;BRCA1&#39;, &#39;BRCA2&#39;, &#39;CDKN2A&#39;, &#39;DCC&#39;, 
+        &#39;DPC4&#39;, &#39;MADR2&#39;, &#39;MEN1&#39;, &#39;NF1&#39;, &#39;NF2&#39;, &#39;PTEN&#39;, 
+        &#39;RB1&#39;, &#39;TP53&#39;, &#39;VHL&#39;, &#39;WRN&#39;, &#39;WT1&#39;
+    ]
+}</code></pre>
+<p>There are multiple potential problems with this. The first, and most obvious, being the class imbalance. There is no getting away from the fact that the GOF section is much larger than the LOF section. Furthermore, I am not a domain specialist, so I can’t tell you whether we should be treating <code>BCL-2</code>, <code>BCL-3</code> and <code>BCL-6</code> differently or treating them all as <code>BCL</code> or whether <code>MYCN</code> is a completely different gene to <code>MYC</code> or if it’s just a different name. For now, at least, this is the list of genes that I will be using.</p>
+<p>Once I had this list of genes to search, querying the MEDLINE database was super easy, adapting this <a href="https://stackoverflow.com/questions/57053378/query-pubmed-with-python-how-to-get-all-article-details-from-query-to-pandas-d">code from stackoverflow</a></p>
+<pre class="python"><code>from pymed import PubMed
+import pandas as pd
+
+pubmed = PubMed(tool=&quot;GeneSearcher&quot;, email=&quot;hugh.warden@outlook.com&quot;)
+
+data = pd.DataFrame(columns=[&#39;pubmed_id&#39;,&#39;title&#39;,&#39;abstract&#39;,&#39;gene&#39;,&#39;gene_type&#39;,&#39;keywords&#39;,&#39;journal&#39;,&#39;conclusions&#39;,&#39;methods&#39;,&#39;results&#39;,&#39;copyrights&#39;,&#39;doi&#39;,&#39;publication_date&#39;,&#39;authors&#39;])
+
+for gene_type in search_genes.keys():
+    for gene in search_genes[gene_type]:
+        results = pubmed.query(gene, max_results=500)
+        articleList = []
+        articleInfo = []
+        for article in results:
+            articleDict = article.toDict()
+            articleList.append(articleDict)
+        for article in articleList:
+            pubmedId = article[&#39;pubmed_id&#39;].partition(&#39;\n&#39;)[0]
+            articleInfo.append({u&#39;pubmed_id&#39;:pubmedId,
+                            u&#39;title&#39;:article[&#39;title&#39;],
+                            u&#39;abstract&#39;:article[&#39;abstract&#39;],
+                            u&#39;gene&#39;:gene,
+                            u&#39;gene_type&#39;:gene_type,
+                            #u&#39;keywords&#39;:article[&#39;keywords&#39;],
+                            #u&#39;journal&#39;:article[&#39;journal&#39;],
+                            #u&#39;conclusions&#39;:article[&#39;conclusions&#39;],
+                            #u&#39;methods&#39;:article[&#39;methods&#39;],
+                            #u&#39;results&#39;: article[&#39;results&#39;],
+                            #u&#39;copyrights&#39;:article[&#39;copyrights&#39;],
+                            #u&#39;doi&#39;:article[&#39;doi&#39;],
+                            #u&#39;publication_date&#39;:article[&#39;publication_date&#39;], 
+                            #&#39;authors&#39;:article[&#39;authors&#39;]
+                        })
+        appendPD = pd.DataFrame.from_dict(articleInfo)
+        data = data.append(appendPD)
+        
+data.to_csv(
+    &quot;data/01_data_collection/raw_data.csv&quot;, 
+    sep=&quot;\t&quot;,
+    index=False
+)</code></pre>
+<p>Now I have abstracts for multiple articles referring to specific genes I have labelled ground truth data for. As you can see, large parts of the data frame were commented out. This was because I did not put any logic in to account for missing data (please do put in a <a href="https://github.com/hwarden162/mutation_nlp!">pull request to change this</a>. This takes all of the data and exports it to a csv. The main reason for this is because I am much more comfortable in R (and to my shame still can’t work out how to use pandas, no matter how many tutorials I do). But I am a big believer in using the right tools for the job and <em>hopefully</em> throughout this project you will see me switching languages to whatever has the best package for the task.</p>
+<p>The NLP specific data preprocessing will be covered in later posts, but there is still a bit of exploratory data analysis and processing to do first. <strong>You need to understand your data for machine learning</strong> and your exploratory data analysis should ideally be measured in hours, not minutes.</p>
+<pre><code>## # A tibble: 94 × 4
+## # Groups:   gene_type [2]
+##    pubmed_id gene   gene_type abstract                                          
+##        &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;                                             
+##  1  35650277 ABL1   GOF       &quot;ABL-class fusions including NUP214-ABL1 and EBF1…
+##  2  35653424 AFF4   GOF       &quot;A primary goal of biomedical research is to eluc…
+##  3  35560280 AKAP13 GOF       &quot;To determine if A-kinase anchoring protein 13 (A…
+##  4  35643235 AKT2   GOF       &quot;Parenteral nutrition (PN) is a lifesaving therap…
+##  5  35651364 ALK    GOF       &quot;&quot;                                                
+##  6  35599749 AML1   GOF       &quot;Acute myeloid leukemia (AML) is a heterogeneous …
+##  7  35652662 APC    LOF       &quot;Amoxicillin-clavulanic acid (AMC) is the most wi…
+##  8  35650435 AXL    GOF       &quot;Disseminated cancer cells from primary tumours c…
+##  9  35654262 BCL-2  GOF       &quot;Cerebral ischemia-reperfusion, subsequent hypert…
+## 10  35641486 BCL-3  GOF       &quot;Acute liver failure (ALF) is a rare entity but e…
+## # … with 84 more rows</code></pre>
+<p>I found this part of the process to be extremely fascinating, I love it when I have data with multiple levels of ground truth labels. By this I mean that each abstract can be tagged with either the id of the article it appears in, the name of the gene used as a search term to return it or the type of that gene (i.e. GOF/LOF). One key thing we have to address before moving on is that the same article may be appear in the results multiple times, matching queries from multiple genes. Lets first check for this:</p>
+<pre class="r"><code>raw_data %&gt;%
+  group_by(pubmed_id) %&gt;%
+  summarise(count = n()) %&gt;%
+  arrange(-count)</code></pre>
+<pre><code>## # A tibble: 37,722 × 2
+##    pubmed_id count
+##        &lt;int&gt; &lt;int&gt;
+##  1  35563746    10
+##  2  35615557    10
+##  3  28597942     8
+##  4  35181378     8
+##  5  35302596     8
+##  6  35614407     8
+##  7  35644022     8
+##  8  33684909     7
+##  9  35127508     7
+## 10  35180531     7
+## # … with 37,712 more rows</code></pre>
+<p>We can see that some papers are returned a lot with respect to multiple genes. The question now is, how do we work out which ones are general papers talking about genes are both GOF and LOF and which ones are just referring to one class of genes? To do this, I calculated how many times the article was returned with respect to each type of gene.</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+I created a metric to determine whether or not I would keep a paper, that I called the <code>logScore</code>. Let <span class="math inline">\(GOF\)</span> and <span class="math inline">\(LOF\)</span> be the number of GOF and LOF mutations, respectively, that returned a given article, then it’s <code>logScore</code> if given by</p>
+<p><span class="math display">\[
+\log_2\left[\frac{GOF}{LOF}\right]
+\]</span></p>
+<p>This is equal to <code>Inf</code> if the paper is only returned by GOF mutations, <code>-Inf</code> if the paper is only returned by LOF mutations and 0 if it is returned by the same number of GOF and LOF mutations. I set a cut off for the <code>logScore</code> that the absolute value had to be greater than 2, which means the paper had to be returned by 4 times as many of one mutation type than the other.</p>
+<p>Another thing to be wary of is that we have capped the number of results for each gene at 500, but not all genes will return that many results.</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>It’s important to keep this in mind for later analyses.</p>
+<p>All of this gives the basic preprocessing steps</p>
+<pre class="r"><code>data &lt;- raw_data %&gt;%
+  mutate(
+    pubmed_id = factor(pubmed_id)
+  ) %&gt;%
+  group_by(
+    pubmed_id,
+    abstract,
+    gene_type
+  ) %&gt;%
+  summarise(
+    count = n()
+  ) %&gt;%
+  pivot_wider(
+    id_cols = c(pubmed_id, abstract),
+    names_from = gene_type,
+    values_from = count
+  ) %&gt;%
+  mutate(
+    LOF = replace_na(LOF, 0),
+    GOF = replace_na(GOF, 0),
+    logScore = log2(GOF/LOF),
+    gene_type = NA,
+    gene_type = replace(gene_type, logScore &gt; 0, &quot;GOF&quot;),
+    gene_type = replace(gene_type, logScore &lt; 0, &quot;LOF&quot;)
+  ) %&gt;%
+  filter(
+    abs(logScore) &gt; 2
+  ) %&gt;%
+  select(
+    pubmed_id,
+    abstract,
+    gene_type
+  )</code></pre>
+<p>There is an awful lot left to do before we can even start on machine learning, but I believe that this data set has some really interesting information in it and I look foward to investigating and sharing what I find out.</p>
