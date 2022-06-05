@@ -4,11 +4,11 @@ title: 'Identifying Gene Characteristics From Literature Using Machine Learning:
 author: R package build
 date: '2022-06-04'
 slug: identifying-gene-characteristics-from-literature-using-machine-learning-data-collection
-categories: []
+categories: [NLP]
 tags: []
-subtitle: ''
-summary: ''
-authors: []
+subtitle: 'Identifying GOF and LOF genes from the MEDLINE database'
+summary: 'I use the MEDLINE database to collect data on papers that reference GOF and LOF genes'
+authors: [admin]
 lastmod: '2022-06-04T23:57:09+01:00'
 featured: no
 image:
