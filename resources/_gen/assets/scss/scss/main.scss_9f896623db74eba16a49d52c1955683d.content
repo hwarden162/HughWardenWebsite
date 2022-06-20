@@ -9528,6 +9528,9 @@ div.chart {
 #about .portrait-title {
   animation: slide-from-left 1s forwards; }
 
+#about .left-widget {
+  animation: slide-from-left 1s forwards; }
+
 #about .network-icon {
   animation: slide-from-left 1s forwards; }
 
