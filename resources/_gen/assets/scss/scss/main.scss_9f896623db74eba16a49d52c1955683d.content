@@ -9531,6 +9531,9 @@ div.chart {
 #about .left-widget {
   animation: slide-from-left 1s forwards; }
 
+#about .twitter-timeline {
+  animation: slide-from-left 1s forwards; }
+
 #about .network-icon {
   animation: slide-from-left 1s forwards; }
 
