@@ -51,4 +51,4 @@ I have many other interests along side my PhD. I enjoy studying the applications
 
 {{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/HughWardenCV.pdf" "newtab" >}}resumé{{< /staticref >}}.
 
-My GitHub Activity:
+My GitHub Activity (this does not include code repos for my work):
