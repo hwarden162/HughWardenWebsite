@@ -21,7 +21,7 @@
 <div class="row">
   <div class="col-12 col-lg-4">
     <div id="profile">
-
+      <!-- Typing SVG by DenverCoder1 - https://github.com/DenverCoder1/readme-typing-svg -->
       {{ if site.Params.avatar.gravatar }}
       <img class="avatar {{if eq $avatar_shape "square"}}avatar-square{{else}}avatar-circle{{end}}" src="https://s.gravatar.com/avatar/{{ md5 $person.email }}?s=270')" alt="{{$person_page.Title}}">
       {{ else if $avatar }}
@@ -66,16 +66,19 @@
       </ul>
 
     </div>
-    <img align="center" src="https://github-readme-stats.vercel.app/api?username=hwarden162&include_all_commits=true&count_private=true&show_icons=true&line_height=20&title_color=2B5BBD&icon_color=1124BB&text_color=2D66BA&bg_color=0,FFFFFF,FFFFFF" alt="my Github Stats"/ class = "left-widget">
+    <img align="center" src="https://github-readme-stats.vercel.app/api?username=hwarden162&include_all_commits=true&count_private=true&show_icons=true&line_height=20&title_color=2D66BA&icon_color=2D66BA&text_color=2D66BA&bg_color=0,FFFFFF,FFFFFF" alt="my Github Stats"/ class = "left-widget">
+    <p align="center" class="left-widget">
+    <a href="https://github.com/DenverCoder1/readme-typing-svg"><img src="https://readme-typing-svg.herokuapp.com/?lines=Machine%20Learning;Bioimage%20Analysis;Hypergraphs;Statistics;Data%20Science;Package%20Developement&font=Fira%20Code&center=true&width=440&height=45&color=2D66BA&vCenter=true&size=22"></a>
+  </p>
     <a class="twitter-timeline" data-height="450" href="https://twitter.com/HughWarden1?ref_src=twsrc%5Etfw">Tweets by HughWarden1</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   </div>
   <div class="col-12 col-lg-8">
-
     {{/* Only display widget title in explicit instances of about widget, not in author pages. */}}
     {{ if and $page.Params.widget $page.Title }}<h1 class='biography-title'>{{ $page.Title | markdownify | emojify }}</h1>{{ end }}
 
   <div class='main-content'>
     {{ $person_page.Content }}
+    <a href="https://github.com/ashutosh00710/github-readme-activity-graph"><img alt="hwarden162's Activity Graph" src="https://denvercoder1-activity-graph.herokuapp.com/graph/?username=hwarden162&bg_color=FFFFFF&color=2D66BA&line=2D66BA&point=2D66BA&hide_border=true" /></a>
   </div>
 
     <div class="row">
