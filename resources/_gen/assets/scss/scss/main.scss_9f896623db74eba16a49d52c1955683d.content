@@ -9532,7 +9532,7 @@ div.chart {
   animation: slide-from-left 1s forwards; }
 
 #about .twitter-timeline {
-  animation: slide-from-left 1s forwards; }
+  animation: slide-from-bottom 1s forwards; }
 
 #about .network-icon {
   animation: slide-from-left 1s forwards; }
