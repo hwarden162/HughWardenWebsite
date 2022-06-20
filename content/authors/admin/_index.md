@@ -50,3 +50,5 @@ I am currently a PhD student in the Biomedical AI lab at the Institute of Geneti
 I have many other interests along side my PhD. I enjoy studying the applications of hypergraphs in real world analysis and developing packkages in R. I have combined these together and I am the author of the `rhype` package for representing hypergraphs in R. I am currently making improvements to the matrix based calculations in order to facilitate speedy handling of large hypergraphs. I hope that this will then be able to be used to calculate cellular redundancy in scRNA-seq data sets, to estimate heterogeneity of a cell population. I always enjoy feedback and input on my work so please get in touch.
 
 {{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/HughWardenCV.pdf" "newtab" >}}resumé{{< /staticref >}}.
+
+![Contribution](https://activity-graph.herokuapp.com/graph?username=hwarden162&theme=react-dark&hide_border=true&area=true)
