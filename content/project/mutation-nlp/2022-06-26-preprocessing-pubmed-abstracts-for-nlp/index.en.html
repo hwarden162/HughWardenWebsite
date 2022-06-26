@@ -1,0 +1,102 @@
+---
+title: Preprocessing PubMed Abstracts For NLP
+author: R package build
+date: '2022-06-26'
+slug: preprocessing-pubmed-abstracts-for-nlp
+categories:
+  - NLP
+tags: []
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2022-06-26T23:11:41+01:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+
+
+<p>This is a follow up blog post for one I wrote a couple of weeks ago, if you haven’t read it then you can find it <a href="https://www.hwarden.com/project/mutation-nlp/identifying-gene-characteristics-from-literature-using-machine-learning-data-collection/">here</a>.</p>
+<p>So I have now successfully downloaded abstracts related to various genes known to be either gain of function or loss of function and therefore very important in cancer. I have never done NLP before and I’ve decided to try and run before I walk (because it’s more fun that way!), but one thing I do know is that it’s really important to <strong>get to know your data before you even touch a machine learning model</strong>.</p>
+<p>One thing to note is that I did go back to the code I made last time and rather than discarding articles that didn’t fall into either the GOF or LOF category I just gave them the label <code>"Other"</code>. As I had no idea where to even start with this, a lot of the inspiration for this post came from <a href="https://juliasilge.com/">Julia Silge’s</a> brilliant post <a href="https://juliasilge.com/blog/sherlock-holmes-stm/">‘The Game Is Afoot! Topic Modeling Of Sherlock Holmes Stories’</a>.</p>
+<p>First thing is first, we need to load in our data.</p>
+<pre class="r"><code>library(tidyverse)
+data &lt;- read_delim(&quot;./data/02_data_preprocessing/processed_data.csv&quot;, delim = &quot;\t&quot;)</code></pre>
+<p>The problem now is that we want to analyse each individual word, not the abstracts as one long string. This might sound like a <code>stringr</code> nightmare, but luckily the <code>tidytext</code> package has got us covered</p>
+<pre class="r"><code>library(tidytext)
+words &lt;- data %&gt;%
+  unnest_tokens(word, abstract) %&gt;%
+  select(pubmed_id, word)</code></pre>
+<pre><code>## # A tibble: 6,860,738 × 2
+##    pubmed_id word    
+##        &lt;dbl&gt; &lt;chr&gt;   
+##  1    262166 isolated
+##  2    262166 and     
+##  3    262166 highly  
+##  4    262166 purified
+##  5    262166 myeloma 
+##  6    262166 igd     
+##  7    262166 dek     
+##  8    262166 sta     
+##  9    262166 and     
+## 10    262166 sar     
+## # … with 6,860,728 more rows</code></pre>
+<p>Now that we have access to each of the words individually, we need to try and find only the ones that are going to be useful. The <code>tidytext</code> package has a really useful list of common “filler” words that appear in normal speech called <code>stop_words</code>, so I used an anti-join to remove these from our pool of words. Then came a lot of reading up on regex that I had never really used before. I wanted to only focus on words (not numbers) so I removed all words that didn’t contain at least one letter from A to Z; I removed any words that were of length 2 or less (as these were nearly all scientific units); I removed any words that had whitespace within them that hadn’t been properly split by <code>unnest_tokens</code>.</p>
+<p>Then came a problem more specific to our context, there are a lot long random strings for some reason (probably some artefact of the web scraping process) like <code>"l9kttorshmefzacnbmjx2pbdck7g6hjkdutdt5psrahfrtq"</code>, but how do we tell them apart from long scientific compound words like <code>"acethylgalactosaminyltransferase"</code>? Looking at the long nonsense words they either looked like random strings or web adresses. To deal with the web addresses I removed any words that contained <code>"."</code>, <code>"_"</code> or <code>":"</code>. To deal with the random strings I realised that all the ones I looked at contained numbers but I couldn’t remove any strings that had numbers in, as important genes have numbers in the (like P53) and I wanted those to stay in my data set. All the genes I know tend to have shorter names and so I settled for just removing all words that contained a number and were longer than 8 characters. I also removed any words that started with a number to try and stop any measurements (like <code>"3mm"</code>) from working their way into the dataset. This was the final result:</p>
+<pre class="r"><code># Filtering out unwanted words
+filtered_words &lt;- words %&gt;%
+  # Removing common words
+  anti_join(stop_words) %&gt;%
+  mutate(
+    # Removing whitespace from before and after each word
+    word = str_trim(word),
+    # Finding the length of each word
+    len = str_length(word)
+  ) %&gt;%
+  filter(
+    # Keeping only words that contain at least one letter
+    str_detect(word, &quot;[A-Za-z]&quot;),
+    # Keeping words with three or more letters
+    len &gt; 2,
+    # Removing words that start with a number
+    str_starts(word, &quot;[0-9]&quot;, negate = TRUE),
+    # Removing words that contain whitespace
+    str_detect(word, &quot;\\s+&quot;, negate = TRUE),
+    # Removing words containing specific pieces of punctuation
+    str_detect(word, &quot;\\.&quot;, negate = TRUE),
+    str_detect(word, &quot;\\_&quot;, negate = TRUE),
+    str_detect(word, &quot;\\:&quot;, negate = TRUE),
+    # Removing any words with 9 or more letters that contain a number
+    !(str_detect(word, &quot;[0-9]&quot;) &amp; (len &gt; 8))
+  )</code></pre>
+<p>We have more information than just the words though, we also know what articles they are from. We have seen that there are some long random strings in our dataset which suggests that our web scraping from my previous post may not have been as successful as first thought. To look at this, I counted the number of words in each abstract</p>
+<pre class="r"><code># Finding the number of filtered words in each abstract
+word_count &lt;- filtered_words %&gt;%
+  group_by(pubmed_id) %&gt;%
+  summarise(
+    count = n()
+  ) %&gt;%
+  # Adding gene_type information for each article
+  left_join(
+    data %&gt;% select(pubmed_id, gene_type)
+  )</code></pre>
+<p>I then plotted these results (all plotting code is in the <a href="https://github.com/hwarden162/mutation_nlp">GitHub Repo</a>)</p>
+<p><img src="Images/abstract_lengths.png" /></p>
+<p>As you can see, there are some suspiciously short and suspiciously long abstracts in this data set, bearing in mind that we have removed quite a few words. I played around with which abstracts to keep and which to discard, but I ended up settling with keeping a range 1.5 standard deviations around the mean (marked by the blue dashed lines in the plot).</p>
+<pre class="r"><code>filtered_articles &lt;- word_count %&gt;%
+  filter(
+    count &lt; mean(count) + 1.5*sd(count),
+    count &gt; mean(count) - 1.5*sd(count)
+  )
+
+filtered_articles_vector &lt;- filtered_articles$pubmed_id
+
+word_data &lt;- filtered_words %&gt;%
+  filter(
+    pubmed_id %in% filtered_articles_vector
+  )</code></pre>
