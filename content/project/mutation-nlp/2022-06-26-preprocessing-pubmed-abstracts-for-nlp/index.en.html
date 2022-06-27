@@ -6,8 +6,8 @@ slug: preprocessing-pubmed-abstracts-for-nlp
 categories:
   - NLP
 tags: []
-subtitle: ''
-summary: ''
+subtitle: 'Learning regex and tf-idf for NLP preprocessing'
+summary: 'Learning regex and tf-idf for NLP preprocessing'
 authors: []
 lastmod: '2022-06-26T23:11:41+01:00'
 featured: no
@@ -100,3 +100,118 @@ word_data &lt;- filtered_words %&gt;%
   filter(
     pubmed_id %in% filtered_articles_vector
   )</code></pre>
+<p>Now we have done some basic preprocessing of the word data, lets start having a look at which words are more important to the different gene classifications. To do this I used a technique called “<a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf">Term Frequency-Inverse Document Frequency</a>”, or TF-IDF for short. This is a measure of how important a word is within a set of documents, in our case a set of abstracts.</p>
+<p>The term frequency is given by</p>
+<p><span class="math display">\[
+tf(t,d) = \frac{f_{t,d}}{\sum_{t&#39; \in d}f_{t&#39;,d}}
+\]</span>
+where <span class="math inline">\(f_{t,d}\)</span> is the number of times the word <span class="math inline">\(t\)</span> appears in the abstract <span class="math inline">\(d\)</span>. This is a measure saying that out of all the times a given word was used, what proportion of those was in the given abstract?</p>
+<p>The inverse document frequency is then given by</p>
+<p><span class="math display">\[
+idf(t, D) = \log\left[\frac{N}{\{d \in D:t \in d\}}\right]
+\]</span>
+where <span class="math inline">\(t\)</span> is a given word, <span class="math inline">\(D\)</span> is our set of abstracts and <span class="math inline">\(N\)</span> is the number of abstracts.</p>
+<p>The tf-idf value is then given by multiplying the two together</p>
+<p><span class="math display">\[
+tfidf(t, d, D) = tf(t,d)\cdot idf(t, D)
+\]</span></p>
+<p>A high tf-idf is reached when a word is common in one article and less common amongst others. These are likely to be words that an NLP algorithm will pick out to use to identify one documents, or document type, vs another. Let’s find out what the highest tf-idf scores are treating all of the abstracts from each gene type as one big document</p>
+<pre class="r"><code>gene_type_tf_idf &lt;- word_data %&gt;%
+  left_join(
+    data %&gt;% select(pubmed_id, gene_type)
+  ) %&gt;%
+  group_by(word, gene_type) %&gt;%
+  summarise(count = n()) %&gt;%
+  bind_tf_idf(word, gene_type, count) %&gt;%
+  ungroup()</code></pre>
+<p>and then plot them</p>
+<p><img src="Images/gene_type_tf_idf" /></p>
+<p>There’s a couple of interesting things in here, like P53 is a famous loss of function gene and it appears as important in the loss of function gene category. But really, our data isn’t 2 big abstracts, it is lots of small ones. So I recalculated the tf-idf scores for each word for each abstract. I then selected the top 50 words by tf-idf for each abstract and counted how many times these appeared for each gene type.</p>
+<pre class="r"><code># Finding tf/idf per article
+article_tf_idf &lt;- word_data %&gt;%
+  group_by(pubmed_id, word) %&gt;%
+  summarise(count = n()) %&gt;%
+  bind_tf_idf(word, pubmed_id, count) %&gt;%
+  ungroup()
+
+# Making data for plot
+p_data &lt;- article_tf_idf %&gt;%
+  group_by(pubmed_id) %&gt;%
+  arrange(-tf_idf) %&gt;%
+  slice_head(n = 50) %&gt;%
+  left_join(
+    data %&gt;% select(pubmed_id, gene_type)
+  ) %&gt;%
+  ungroup() %&gt;%
+  group_by(word, gene_type) %&gt;%
+  summarise(count = n()) %&gt;%
+  ungroup() %&gt;%
+  filter(gene_type != &quot;Other&quot;) %&gt;%
+  group_by(gene_type) %&gt;%
+  arrange(-count) %&gt;%
+  slice_head(n = 60) %&gt;%
+  ungroup() %&gt;%
+  mutate(
+    order = -row_number()
+  )</code></pre>
+<p>Here’s a plot of the results</p>
+<p><img src="Images/abstract_tf_idf" /></p>
+<p>From this we can see that there are words that regularly come up as useful for identification but appear in the top words for both the GOF and LOF categories. These seem to be common among certain subtypes of papers, for example both <code>"patients"</code> and <code>"cells"</code> are important, probably referencing different types of experiments, but this won’t help us tell the difference between GOF and LOF mutations. Therefore, I removed any word that appeared in the top 250 words by tf-idf for both GOF and LOF mutations.</p>
+<pre class="r"><code># Finding the top tf/idf words in both gene types
+top_tf_idf_words &lt;- p_data &lt;- article_tf_idf %&gt;%
+  group_by(pubmed_id) %&gt;%
+  arrange(-tf_idf) %&gt;%
+  slice_head(n = 50) %&gt;%
+  left_join(
+    data %&gt;% select(pubmed_id, gene_type)
+  ) %&gt;%
+  ungroup() %&gt;%
+  group_by(word, gene_type) %&gt;%
+  summarise(count = n()) %&gt;%
+  ungroup() %&gt;%
+  filter(gene_type != &quot;Other&quot;) %&gt;%
+  group_by(gene_type) %&gt;%
+  arrange(-count) %&gt;%
+  slice_head(n = 250) %&gt;%
+  ungroup() %&gt;%
+  group_by(word) %&gt;%
+  summarise(count = n()) %&gt;%
+  filter(count == 2)
+
+# Removing shared top tf/idf words
+word_data &lt;- word_data %&gt;%
+  anti_join(top_tf_idf_words)</code></pre>
+<p>All of this put together gives us one long preprocessing function</p>
+<pre class="r"><code># Word Preprocessing
+final_words &lt;- words %&gt;%
+  # Removing common words
+  anti_join(stop_words) %&gt;%
+  mutate(
+    # Removing whitespace from before and after each word
+    word = str_trim(word),
+    # Finding the length of each word
+    len = str_length(word)
+  ) %&gt;%
+  filter(
+    # Keeping only words that contain at least one letter
+    str_detect(word, &quot;[A-Za-z]&quot;),
+    # Keeping words with three or more letters
+    len &gt; 2,
+    # Removing words that start with a number
+    str_starts(word, &quot;[0-9]&quot;, negate = TRUE),
+    # Removing words that contain whitespace
+    str_detect(word, &quot;\\s+&quot;, negate = TRUE),
+    # Removing words containing specific pieces of punctuation
+    str_detect(word, &quot;\\.&quot;, negate = TRUE),
+    str_detect(word, &quot;\\_&quot;, negate = TRUE),
+    str_detect(word, &quot;\\:&quot;, negate = TRUE),
+    # Removing any words with 9 or more letters that contain a number
+    !(str_detect(word, &quot;[0-9]&quot;) &amp; (len &gt; 8))
+  ) %&gt;%
+  # Removing articles with abstracts that are too short or too long
+  filter(
+    pubmed_id %in% filtered_articles_vector
+  ) %&gt;%
+  # Removing words that appear often in the tf/idf of articles from both gene types
+  anti_join(top_tf_idf_words)</code></pre>
+<p>I don’t know how useful any of this is and whether there are extra steps I’ll have to do in the future, but it seems like a good start for now. Hopefully we are one step closer to be able to identify GOF and LOF genes from reading abstracts about them!</p>
