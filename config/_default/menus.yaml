@@ -13,3 +13,6 @@ main:
   - name: Acknowledgements
     url: acknowledgement/
     weight: 60
+  - name: rhype
+    url: uploads/rhype/index.html
+    weight: 70
