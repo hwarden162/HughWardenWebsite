@@ -83,6 +83,186 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"hwarden162/rhype"</span><span class="op">)</span></span></code></pre></div>
 </div>
+<div class="section level1">
+<h1 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
+</h1>
+<p>To get started with <code>rhype</code>, see these blog posts:</p>
+<ul>
+<li><a href="https://www.hwarden.com/project/rhype/working-with-hypergraphs-in-r-using-rhype/" class="external-link">Working With Hypergraphs In R</a></li>
+<li><a href="https://www.hwarden.com/project/estimating-heterogeneity-of-scrna-seq-data-with-rhype/" class="external-link">Estimating Heterogeneity of scRNA-seq Data With rhype</a></li>
+</ul>
+<p>Within <code>rhype</code>, there comes a new environment that saves all the information about a hypergraph. There are multiple functions for creating hypergraphs from your own data, but as well as this there is a function for generating example hypergraphs to test pipelines and run proof of concepts.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rhype</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">hype</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/example_hype.html">example_hype</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">hype</span></span>
+<span><span class="co">#&gt; Hypergraph Object: </span></span>
+<span><span class="co">#&gt;     Number of vertices:  4 </span></span>
+<span><span class="co">#&gt;     Number of hyperedges:  2 </span></span>
+<span><span class="co">#&gt;     Oriented:  FALSE    Directed:  FALSE </span></span>
+<span><span class="co">#&gt;     Real Coefficients:  FALSE    Weighted:  FALSE</span></span></code></pre></div>
+<p>This is the basic output that a hypergraph object will print to the screen. To get more information, you can use the <code>hype_info</code> function, although this may be quite large for large hypergraphs.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/hype_info.html">hype_info</a></span><span class="op">(</span><span class="va">hype</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ====================HYPERGRAPH INFORMATION====================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------VERTEX INFORMATION--------------------</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; This hypergraph has  4  vertices</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; These vertices are called:</span></span>
+<span><span class="co">#&gt;  v1, v2, v3, v4 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------HYPEREDGE INFORMATION--------------------</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; The hyperedges are called:</span></span>
+<span><span class="co">#&gt;  h1, h2 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; The hyperedges have the structure:</span></span>
+<span><span class="co">#&gt; $h1</span></span>
+<span><span class="co">#&gt; [1] 1 2 3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $h2</span></span>
+<span><span class="co">#&gt; [1] 2 3 4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ---------------WEIGHTING INFORMATION--------------------</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; This hypergraph is not weighted</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------Orientation Information--------------------</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; This hypergraph is not oriented</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; This hypergraph is not directed</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------REAL COEFFICIENTS INFORMATION--------------------</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; This hypergraph does not have real coefficients associating vertices to hyperedges</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; There is no incidence matrix associating vertices to hyperedges with non-binary coefficients</span></span></code></pre></div>
+<p>Hypergraphs can be abstracted in many ways and can quickly become complicated, <code>rhype</code> is designed to make these abstractions as simple to work with as possible and design a simple interface to working with with many common hypergraph applications. An example of a very complex hypergraph:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hype1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/example_hype.html">example_hype</a></span><span class="op">(</span></span>
+<span>  oriented <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  directed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  vertex_weighted <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  edge_weighted <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  real_coef <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/hype_info.html">hype_info</a></span><span class="op">(</span><span class="va">hype1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ====================HYPERGRAPH INFORMATION====================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------VERTEX INFORMATION--------------------</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; This hypergraph has  4  vertices</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; These vertices are called:</span></span>
+<span><span class="co">#&gt;  v1, v2, v3, v4 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------HYPEREDGE INFORMATION--------------------</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; The hyperedges are called:</span></span>
+<span><span class="co">#&gt;  h1, h2 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; The hyperedges have the structure:</span></span>
+<span><span class="co">#&gt; $h1</span></span>
+<span><span class="co">#&gt; $h1$from</span></span>
+<span><span class="co">#&gt; [1] 1 2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $h1$to</span></span>
+<span><span class="co">#&gt; [1] 3 4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $h2</span></span>
+<span><span class="co">#&gt; $h2$from</span></span>
+<span><span class="co">#&gt; [1] 2 3 4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $h2$to</span></span>
+<span><span class="co">#&gt; [1] 1 2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ---------------WEIGHTING INFORMATION--------------------</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; This hypergraph is weighted</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; The hyperedges have weights:</span></span>
+<span><span class="co">#&gt; h1 h2 </span></span>
+<span><span class="co">#&gt;  1  2 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; The vertices have weights:</span></span>
+<span><span class="co">#&gt; v1 v2 v3 v4 </span></span>
+<span><span class="co">#&gt;  1  2  3  4 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------Orientation Information--------------------</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; This hypergraph is oriented</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; This hypergraph is directed</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------REAL COEFFICIENTS INFORMATION--------------------</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; This hypergraph has real coefficients associating vertices to hyperedges</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; The incidence matrix associating vertices to hyperedges is given by:</span></span>
+<span><span class="co">#&gt; $from</span></span>
+<span><span class="co">#&gt;    h1 h2</span></span>
+<span><span class="co">#&gt; v1  1  0</span></span>
+<span><span class="co">#&gt; v2  2  2</span></span>
+<span><span class="co">#&gt; v3  0  3</span></span>
+<span><span class="co">#&gt; v4  0  4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $to</span></span>
+<span><span class="co">#&gt;    h1 h2</span></span>
+<span><span class="co">#&gt; v1  0  1</span></span>
+<span><span class="co">#&gt; v2  0  2</span></span>
+<span><span class="co">#&gt; v3  3  0</span></span>
+<span><span class="co">#&gt; v4  4  0</span></span></code></pre></div>
+<p><code>rhype</code> lowers the in level of technical knowledge needed for working with hypergraphs, providing a simple interface for exploring higher order interactions.</p>
+</div>
+<div class="section level1">
+<h1 id="advanced-functionality">Advanced Functionality<a class="anchor" aria-label="anchor" href="#advanced-functionality"></a>
+</h1>
+<p>Hypergraph objects are R6 objects that have inherent properties describing their structure. These properties are private and need to be changed via public getter and setter functions, although at the moment these have no validation on them as this is taken care of within other functions.</p>
+<p>The inherent properties of a hypergraph are:</p>
+<p><code>numv</code>: The number of vertices in the hypergraph</p>
+<p><code>elist</code>: The hyperedge list, a list of the vertices contained in each hyperedge this structure is slightly more complicated for oriented hypergraphs)</p>
+<p><code>vnames</code>: A vector of names of the vertices</p>
+<p><code>vweights</code>: A vector of weights of the vertices</p>
+<p><code>enames</code>: A vector of names of the hyperedges</p>
+<p><code>eweights</code>: A vector of weights of the hyperedges</p>
+<p><code>weighted</code>: Whether the hypergraph is weighted (a hypergraph is weighted if it has either or both vertex or hyperedge weights)</p>
+<p><code>oriented</code>: Whether the hypergraph is oriented</p>
+<p><code>directed</code>: Whether the hypergraph is directed (all directed hypergraphs are oriented)</p>
+<p><code>real_coef</code>: Whether the hypergraph has real coefficients associating vertices to hyperedges</p>
+<p><code>inc_mat</code>: A matrix of the real coefficients associating vertices to hyperedges, only present for hypergraphs with real coefficients (has a slightly different structure for oriented hypergraphs)</p>
+<p>It is encouraged to use these functions if <code>rhype</code> does not currently cater to your analytical needs, however, the way in which hypergraphs are represented may be changed and therefore so might these functions. This means that <strong>there is no guarantee these functions will be present or work in the same way in the future</strong>. If you are doing something that is not currently supported in <code>rhype</code> please wrap it in a function and make a pull request to the <a href="https://github.com/hwarden162/rhype" class="external-link">GitHub repo</a>, then the code will always be maintined and tested to work in future versions.</p>
+<p>These properties of the hypergraph interact with one another and so therefore making changes can break the integrity of the hypergraph object, causing further functions to fail. If you are changing the object directly and something is not working the <code><a href="reference/validate_hypergraph.html">validate_hypergraph()</a></code> function is supplied as a first point of call for troubleshooting.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hype</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/example_hype.html">example_hype</a></span><span class="op">(</span></span>
+<span>  oriented <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  directed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  edge_weighted <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  vertex_weighted <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">hype</span><span class="op">$</span><span class="fu">set_directed</span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">hype</span><span class="op">$</span><span class="fu">set_numv</span><span class="op">(</span><span class="fl">50</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/validate_hypergraph.html">validate_hypergraph</a></span><span class="op">(</span><span class="va">hype</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   There are 3 serious problems with this hypergraph:</span></span>
+<span><span class="co">#&gt;   ✖ The number of vertices is not equal to the length of the vector containing the vertex names. </span></span>
+<span><span class="co">#&gt;  ✖ The number of vertices is not equal to the length of the vector containing the vertex weights and the hypergraph is weighted. </span></span>
+<span><span class="co">#&gt;  ✖ The hypergraph is directed but not oriented.</span></span>
+<span><span class="co">#&gt;  There are 1 items that need your attention with this hypergraph:</span></span>
+<span><span class="co">#&gt;   ℹ The number of vertices recorded and the number of vertices contained in the hyperedge list is different. This is expected if and only if you have an isolated vertex in your hypergraph. </span></span>
+<span><span class="co">#&gt;  These tests are not exhaustive, just an indication of where things might be going wrong.</span></span></code></pre></div>
+<p>As well as outputting to the screen this can also be used as a part of a validation function by setting it to return a boolean</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/validate_hypergraph.html">validate_hypergraph</a></span><span class="op">(</span><span class="va">hype</span>, return <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
+</div>
 
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
