@@ -19,6 +19,9 @@
     <loc>/reference/adjacency_matrix.html</loc>
   </url>
   <url>
+    <loc>/reference/bootstrap_hype.html</loc>
+  </url>
+  <url>
     <loc>/reference/cardinality.html</loc>
   </url>
   <url>
@@ -95,6 +98,9 @@
   </url>
   <url>
     <loc>/reference/pseudo_invert.html</loc>
+  </url>
+  <url>
+    <loc>/reference/shuffle_hype.html</loc>
   </url>
   <url>
     <loc>/reference/spectra.html</loc>
