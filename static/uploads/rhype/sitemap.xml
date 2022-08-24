@@ -25,7 +25,13 @@
     <loc>/reference/cardinality.html</loc>
   </url>
   <url>
+    <loc>/reference/connectivity_graph.html</loc>
+  </url>
+  <url>
     <loc>/reference/degree.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dual_hype.html</loc>
   </url>
   <url>
     <loc>/reference/eigenvector_centrality.html</loc>
@@ -38,6 +44,9 @@
   </url>
   <url>
     <loc>/reference/has_real_coef.html</loc>
+  </url>
+  <url>
+    <loc>/reference/hype_dual.html</loc>
   </url>
   <url>
     <loc>/reference/hype_from_edge_list.html</loc>
@@ -82,6 +91,9 @@
     <loc>/reference/is_weighted.html</loc>
   </url>
   <url>
+    <loc>/reference/jackknife_hype.html</loc>
+  </url>
+  <url>
     <loc>/reference/laplacian_matrix.html</loc>
   </url>
   <url>
@@ -97,7 +109,13 @@
     <loc>/reference/min_degree.html</loc>
   </url>
   <url>
+    <loc>/reference/partial_hype.html</loc>
+  </url>
+  <url>
     <loc>/reference/pseudo_invert.html</loc>
+  </url>
+  <url>
+    <loc>/reference/shortest_hyperpaths.html</loc>
   </url>
   <url>
     <loc>/reference/shuffle_hype.html</loc>
@@ -110,6 +128,9 @@
   </url>
   <url>
     <loc>/reference/spectral_distance_disc.html</loc>
+  </url>
+  <url>
+    <loc>/reference/support_graph.html</loc>
   </url>
   <url>
     <loc>/reference/validate_hypergraph.html</loc>

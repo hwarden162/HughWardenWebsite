@@ -11,6 +11,12 @@
     perform spectral comparison. Functionality coming soon includes calculation
     of hyperpaths and hypergraph centrality measures.">
 <title>Work with Hypergraphs in R • rhype</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -21,6 +27,7 @@
     themselves. It also uses these matrices to calculate hypergraph spectra and
     perform spectral comparison. Functionality coming soon includes calculation
     of hyperpaths and hypergraph centrality measures.">
+<meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -34,7 +41,7 @@
     
     <a class="navbar-brand me-2" href="index.html">rhype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,14 +69,16 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="rhype-a-flexible-package-for-working-with-hypergraphs-in-r">rhype: A Flexible Package For Working With Hypergraphs In R<a class="anchor" aria-label="anchor" href="#rhype-a-flexible-package-for-working-with-hypergraphs-in-r"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="rhype-a-flexible-package-for-working-with-hypergraphs-in-r">rhype: A Flexible Package For Working With Hypergraphs In R<a class="anchor" aria-label="anchor" href="#rhype-a-flexible-package-for-working-with-hypergraphs-in-r"></a>
+</h1>
+</div>
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
-<!-- badges: end -->
+
 </div>
 <div class="section level1">
-<h1 id="introduction-">Introduction <img src="reference/figures/rhype_hex.png" align="right" width="150px/"><a class="anchor" aria-label="anchor" href="#introduction-"></a>
+<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h1>
 <p><code>rhype</code> is a package for working with hypergraphs in R. It works under the general idea that data can be transformed into a hypergraph object and then there are many functions to manipulate and analyse this hypergraph object.</p>
 </div>
@@ -237,7 +246,7 @@
 <p><code>directed</code>: Whether the hypergraph is directed (all directed hypergraphs are oriented)</p>
 <p><code>real_coef</code>: Whether the hypergraph has real coefficients associating vertices to hyperedges</p>
 <p><code>inc_mat</code>: A matrix of the real coefficients associating vertices to hyperedges, only present for hypergraphs with real coefficients (has a slightly different structure for oriented hypergraphs)</p>
-<p>It is encouraged to use these functions if <code>rhype</code> does not currently cater to your analytical needs, however, the way in which hypergraphs are represented may be changed and therefore so might these functions. This means that <strong>there is no guarantee these functions will be present or work in the same way in the future</strong>. If you are doing something that is not currently supported in <code>rhype</code> please wrap it in a function and make a pull request to the <a href="https://github.com/hwarden162/rhype" class="external-link">GitHub repo</a>, then the code will always be maintined and tested to work in future versions.</p>
+<p>It is encouraged to use these functions if <code>rhype</code> does not currently cater to your analytical needs, however, the way in which hypergraphs are represented may be changed and therefore so might these functions. This means that <strong>there is no guarantee these functions will be present or work in the same way in the future</strong>. If you are doing something that is not currently supported in <code>rhype</code> please wrap it in a function and make a pull request to the <a href="https://github.com/hwarden162/rhype" class="external-link">GitHub repo</a>, then the code will always be maintained and tested to work in future versions.</p>
 <p>These properties of the hypergraph interact with one another and so therefore making changes can break the integrity of the hypergraph object, causing further functions to fail. If you are changing the object directly and something is not working the <code><a href="reference/validate_hypergraph.html">validate_hypergraph()</a></code> function is supplied as a first point of call for troubleshooting.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hype</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/example_hype.html">example_hype</a></span><span class="op">(</span></span>
@@ -290,11 +299,17 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Hugh Warden <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-4308-7316" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>
+<a href="https://hwarden.com" class="external-link">Hugh Warden</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-4308-7316" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://app.codecov.io/gh/hwarden162/rhype?branch=main" class="external-link"><img src="https://codecov.io/gh/hwarden162/rhype/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
@@ -302,7 +317,7 @@
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Hugh Warden.</p>
+<p>Developed by <a href="https://hwarden.com" class="external-link">Hugh Warden</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
