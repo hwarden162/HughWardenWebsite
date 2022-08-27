@@ -22,7 +22,10 @@ hyperedge has the original vertex as a member."><meta property="og:image" conten
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/rhype.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item">
@@ -70,8 +73,12 @@ hyperedge has the original vertex as a member.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">hype</span> <span class="op">&lt;-</span> <span class="fu"><a href="example_hype.html">example_hype</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">hype_dual</span><span class="op">(</span><span class="va">hype</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in hype_dual(hype):</span> could not find function "hype_dual"</span>
+<span class="r-in"><span><span class="fu">dual_hype</span><span class="op">(</span><span class="va">hype</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Hypergraph Object: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Number of vertices:  2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Number of hyperedges:  4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Oriented:  FALSE    Directed:  FALSE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Real Coefficients:  FALSE    Weighted:  FALSE </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
