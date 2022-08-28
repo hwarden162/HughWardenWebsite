@@ -1,0 +1,229 @@
+---
+title: Why I Stopped Reading Coefficients Of Linear Regression
+author: R package build
+date: '2022-08-27'
+slug: why-i-stopped-reading-coefficients-of-linear-regression
+categories:
+  - XAI
+  - Machine Learning
+  - R
+tags:
+  - R
+  - Machine Learning
+  - XAI
+subtitle: 'An oversimplified answer to a complicated question'
+summary: 'I look at how there is more to consider than just coefficients when investigating a linear model'
+authors: [admin]
+lastmod: '2022-08-27T21:43:27+01:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+I train a lot of machine learning models to make predictions and invariably the first question I am asked is 'how is your model making those decisions?'. Luckily for me, up until now a lot of the models I have trained are variations on linear regression, widely claimed to be the most interpretable of models. But after completing a more involved problem earlier this year and thinking about it more in depth, I really started to question the effectiveness of my approach.
+
+## Linear Regression Coefficients
+
+I am going to assume that if you are reading this then you have at least a basic understanding of linear regression. In general we are trying to find a linear relationship between our input variables $\underline{x}$ and our out put variable $y$ of the form
+
+$$
+  E[y] = \beta_0 + \beta_1x_1 + \beta_2x_2 + ... + \beta_px_p
+$$
+
+This model is completely interpretable. We know for sure that when we increase our input variable ($x_i$) by a value of 1 then our expected output variable ($E[y]$) will increase by the value of the coefficient preceding it ($\beta_i$).
+
+So what is my problem? Everything I have said above is completely true, the linear regression model is completely interpretable and I can tell you exactly how it will behave when any of its inputs change. The problem comes when you start trying to apply your knowledge of the model to the real world system. As the saying goes *'All models are wrong'* and it is this inaccuracy in representation of the system is where our problem lies, but maybe not in the way that you might first think.
+
+## The Boston Housing Data
+
+For this example I will be using the Boston Housing dataset. This is available to download online or comes as a part of the `mlbench` library, which is how I will be accessing it. 
+
+```{r}
+# Load the mlbench library containing the data set
+library(mlbench)
+
+# Load the Boston Housing Dataset
+data("BostonHousing")
+
+# Turn all entries into a number
+data <- apply(BostonHousing, 2, as.numeric)
+data <- as.data.frame(data)
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+data %>% as_tibble()
+```
+
+If you would like to kow more about each of the variables in the data set you can use the help function
+
+```{r, eval=FALSE}
+?BostonHousing
+```
+
+Now we are going to train a linear model to the data
+
+```{r}
+mod <- lm(medv ~ ., data = data)
+mod$coefficients
+```
+
+Here we can see `rm` has a coefficient of about 3.8 which is the largest in size (ignoring the intercept), does this mean that it is the most important predictor in the data set? The obvious answer here is: we can't say. This is because all of our variables are using different units and this will have a big effect on the coefficients. So before we train a linear model we should be centering and scaling our data
+
+```{r}
+# Centering and scaling the data
+data <- scale(data, center = TRUE, scale = TRUE)
+data <- as.data.frame(data)
+```
+
+```{r, echo=FALSE}
+data %>% as_tibble()
+```
+
+Lets see what is the "most important" variable according to linear regression now?
+
+```{r}
+mod <- lm(medv ~ ., data = data)
+mod$coefficients
+```
+
+Here we we can see `lstat` is now considered to be the most important. Now we can try and bootstrap these coefficients to try and get some idea of a confidence interval on them. To perform a bootstrap, we will resample our data (randomly select rows) **with replacement** (meaning we can select the same row more than once) such that until we have a new data set that is the same size as our original one. If we calculate a new set of coefficients on this new data set, they should be similar but slightly different. The amount by which the coefficients vary can then be used to infer the uncertainty related with that coefficient. For this experiment I am going to use 25,000 resamples, for this I am going to create a variable `N_SAMPLE` to save this. This code can take a long time to run and so if you are recreating this you may wish to try with fewer resamples.
+
+```{r}
+# Setting the seed so that results can be recreated
+set.seed(123)
+# Setting the number of resamples
+N_SAMPLE = 25000
+```
+
+I am then going to create a matrix to store the value of each coefficient, I am also going to create a matrix that will store the rank of each variable according to how important it is.
+
+```{r}
+coefs <- matrix(0, ncol = ncol(data), nrow = N_SAMPLE)
+ranks <- matrix(0, ncol = ncol(data), nrow = N_SAMPLE)
+```
+
+I then perform the bootstrapping
+
+```{r}
+for (i in 1:N_SAMPLE) {
+  data_samples <- data[sample(1:nrow(data), nrow(data), replace = TRUE),]
+  mod <- lm(medv ~ ., data = data_samples)
+  coefs[i,] <- mod$coefficients
+  ranks[i,] <- -abs(mod$coefficients) %>% rank(ties.method = "random")
+}
+
+colnames(coefs) <- names(mod$coefficients)
+colnames(ranks) <- names(mod$coefficients)
+```
+
+We can then plot the distribution of these coefficients
+
+```{r, echo=FALSE}
+coefs <- coefs %>%
+  as_tibble()
+
+coefs %>%
+  pivot_longer(
+    cols = colnames(coefs)
+  ) %>%
+  mutate(
+    name = fct_reorder(name, value)
+  ) %>%
+  ggplot(
+    aes(
+      x = value,
+      y = name
+    )
+  ) +
+  geom_boxplot(
+    outlier.shape = 1,
+    aes(fill = name)
+  ) +
+  geom_vline(
+    xintercept = 0,
+    linetype = 2,
+    colour = "red"
+  ) +
+  theme_minimal() +
+  labs(
+    x = "Value of Linear Regression Coefficient",
+    y = "Name of Variable",
+    caption = "Calculated under 25,000 bootstrap resamples"
+  ) +
+  theme(
+    axis.text.y = element_text(angle = 30)
+  ) +
+  guides(
+    fill = "none"
+  ) +
+  scale_fill_viridis_d()
+```
+
+By doing this, you can see just how wide the range of these coefficients are under perturbation. Not only this, but some variables that are quite clearly o one side of the 0 (e.g. `crim`) have multiple coefficients that cross 0 changing the way the variable will be interpretted. This is not to be confused with the ceoffecients centered around 0, these too have their own problems though, with many non-zero coefficients seemingly implying relationships that are not present. This might not be a problem in and of itself, but we can see that the ranges overlap quite substantially, so if we look at the rank of each of these coefficients under resampling we can see that varies wildly too.
+
+```{r, echo=FALSE}
+ranks <- ranks %>%
+  as_tibble()
+
+ranks %>%
+  pivot_longer(
+    cols = colnames(ranks)
+  ) %>%
+  mutate(
+    name = fct_reorder(name, value),
+    fill_col = seq_along(value),
+    height = 1
+  ) %>%
+  ggplot(
+    aes(
+      x = value,
+      y = height,
+      fill = fill_col
+    )
+  ) +
+  geom_col(
+    position = position_stack()
+  ) +
+  facet_wrap(
+    ~ name
+  ) +
+  scale_fill_viridis_c() +
+  guides(fill = "none") +
+  theme_minimal() +
+  labs(
+    x = "Rank of Predictor in Linear Regression Model",
+    y = "Count",
+    caption = "Calculated under 25,000 bootstrap resamples"
+  )
+```
+
+This shows that which variables are more important varies substantially under small perturbations of the underlying data. This alone was evidence enough for me that I should stop using the coefficients of linear regression as it can't even consistently rank the importance of variables.
+
+## Why is this happening?
+
+There are multiple reasons why this is happening linked to the resampling of the data. But the main reason is correlation in the underlying data.
+
+```{r, echo=FALSE}
+library(ggcorrplot)
+cor <- round(cor(data), 2)
+p.mat <- cor_pmat(data)
+
+ggcorrplot(
+  cor, hc.order = TRUE, type = "lower", outline.col = "white",
+  p.mat = p.mat
+  ) +
+  scale_fill_viridis_c(option = "turbo")
+
+```
+
+As we can see from this correlation plot, the variables covary a lot. This can make it hard for linear regression to determine which variable is contributing to a change as they are all varying together. This isn't *necessarily* a problem for prediction ut is a big problem for inference. It means that if a variable is truly important, it might not have a large coefficient but something it is correlated with does.
+
+This correlation leads to another problem too, as the way in which we are interpretting the system is by definition at odds with the way in which we are interpretting the model. By reading coefficients we are asking **how will the prediction change if this variable changes and nothing else does?**. But within  the system we know that variables never change independently and a lot of the time the idea of one variable changing whilst another stays the same is nonsensical.
+
+## Conclusions
+
+This is a very rough overview of some of the many issues reading coefficients of linear models. It is still something I might do as part of exploratory data analysis or a quick sanity check, but it is now something that I am trying to move away from. In any case where I have to do it I try and keep these ideas in mind and I am very careful about any inferential statements that I make.
